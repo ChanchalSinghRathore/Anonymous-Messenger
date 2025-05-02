@@ -20,7 +20,7 @@ export async function GET(request: Request) {
   try {
     const user = await UserModel.aggregate([
       { $match: { _id: userId } },
-      { $unwind: '$messages' },
+      { $unwind: { path: '$messages', preserveNullAndEmptyArrays: true } }, // allowing empty array of messages. Without "preserveNullAndEmptyArrays: true", toast will show user not found which is not a correct message.
       { $sort: { 'messages.createdAt': -1 } },
       { $group: { _id: '$_id', messages: { $push: '$messages' } } },
     ]).exec();
